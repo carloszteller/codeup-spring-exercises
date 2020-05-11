@@ -1,1 +1,1 @@
-# spiring-blog-app
+# codeup-spring-exercises

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="partials/partials :: head (title=${title})"></head>
+<body>
+    <nav th:replace="partials/partials :: navbar"></nav>
+
+    <p>Guess where the dice will land:</p>
+
+    <ul class="list-inline">
+        <li class="list-inline-item"><a href="/roll-dice/1">1</a></li>
+        <li class="list-inline-item"><a href="/roll-dice/2">2</a></li>
+        <li class="list-inline-item"><a href="/roll-dice/3">3</a></li>
+        <li class="list-inline-item"><a href="/roll-dice/4">4</a></li>
+        <li class="list-inline-item"><a href="/roll-dice/5">5</a></li>
+        <li class="list-inline-item"><a href="/roll-dice/6">6</a></li>
+    </ul>
+
+    <p th:text="${result}"></p>
+
+    <footer th:replace="partials/partials :: footer"></footer>
+    <th:block th:replace="partials/partials :: scripts"></th:block>
+</body>
+</html>

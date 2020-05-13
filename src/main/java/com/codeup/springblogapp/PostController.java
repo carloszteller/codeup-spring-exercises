@@ -1,39 +1,75 @@
 package com.codeup.springblogapp;
 
+import com.codeup.springblogapp.repositories.PostRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class PostController {
+    // Dependency Injection
+    private PostRepository postRepository;
+
+    public PostController(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
+
     @GetMapping("/posts")
     public String posts(Model model) {
         model.addAttribute("title", "View All Posts");
+        model.addAttribute("posts", postRepository.findAll());
+
         return "/posts/index";
     }
 
-    @GetMapping("/posts/{id}")
+    @GetMapping("/post/show/{id}")
     public String postById(@PathVariable long id, Model model) {
-        Post post = new Post(id, "My Post Title", "Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
+//        Post post = new Post(id, "My Post Title", "Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
 
         model.addAttribute("title", "View Single Post");
-        model.addAttribute("post", post);
+        model.addAttribute("post", postRepository.getOne(id));
 
         return "/posts/show";
     }
 
     @GetMapping("/posts/create")
-    @ResponseBody
-    public String getCreate() {
-        return "view the form for creating a post";
+    public String getCreate(Model model) {
+        model.addAttribute("title", "Create New Post");
+
+        return "/posts/create";
     }
 
     @PostMapping("/posts/create")
-    @ResponseBody
-    public String postCreate() {
-        return "create a new post";
+    public String postCreate(@RequestParam("title") String title, @RequestParam("body") String body) {
+        Post post = new Post(title, body);
+
+        postRepository.save(post);
+
+        return "redirect:/posts";
+    }
+
+    @GetMapping("/post/update/{id}")
+    public String getUpdate(@PathVariable long id, Model model) {
+        model.addAttribute("title", "Update Post");
+        model.addAttribute("post", postRepository.getOne(id));
+
+        return "/posts/update";
+    }
+
+    @PostMapping("/post/update/{id}")
+    public String postUpdate(@PathVariable long id, @RequestParam("title") String title, @RequestParam("body") String body) {
+        Post post = postRepository.getOne(id);
+        post.setTitle(title);
+        post.setBody(body);
+        postRepository.save(post);
+
+        return "redirect:/post/show/" + id;
+    }
+
+    @GetMapping("/post/delete/{id}")
+    public String getUpdate(@PathVariable long id) {
+        postRepository.deleteById(id);
+
+        return "redirect:/posts";
     }
 }

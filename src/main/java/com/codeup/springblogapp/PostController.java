@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     // Dependency Injection
     private PostRepository postRepository;
+    private UserRepository userRepository;
 
-    public PostController(PostRepository postRepository) {
+    public PostController(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/posts")
@@ -25,9 +27,9 @@ public class PostController {
     @GetMapping("/post/show/{id}")
     public String postById(@PathVariable long id, Model model) {
 //        Post post = new Post(id, "My Post Title", "Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
-
         model.addAttribute("title", "View Single Post");
         model.addAttribute("post", postRepository.getOne(id));
+        model.addAttribute("user", userRepository.getOne((long) 1));
 
         return "/posts/show";
     }
@@ -42,6 +44,9 @@ public class PostController {
     @PostMapping("/posts/create")
     public String postCreate(@RequestParam("title") String title, @RequestParam("body") String body) {
         Post post = new Post(title, body);
+        User user = userRepository.getOne((long) 1);
+
+        post.setUser(user);
 
         postRepository.save(post);
 
@@ -59,6 +64,9 @@ public class PostController {
     @PostMapping("/post/update/{id}")
     public String postUpdate(@PathVariable long id, @RequestParam("title") String title, @RequestParam("body") String body) {
         Post post = postRepository.getOne(id);
+        User user = userRepository.getOne((long) 1);
+
+        post.setUser(user);
         post.setTitle(title);
         post.setBody(body);
         postRepository.save(post);

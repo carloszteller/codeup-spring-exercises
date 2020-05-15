@@ -29,7 +29,6 @@ public class PostController {
 //        Post post = new Post(id, "My Post Title", "Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
         model.addAttribute("title", "View Single Post");
         model.addAttribute("post", postRepository.getOne(id));
-        model.addAttribute("user", userRepository.getOne((long) 1));
 
         return "/posts/show";
     }

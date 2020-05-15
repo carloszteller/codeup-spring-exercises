@@ -8,7 +8,7 @@
         <h1>Single Post</h1>
 
         <h2 th:text="${post.title}"></h2>
-        <p th:text="'Created by: ' + ${user.email}"></p>
+        <a th:href="'mailto:' + ${post.user.email}" th:text="'Created by: ' + ${post.user.email}"></a>
         <p th:text="${post.body}"></p>
 
         <a th:href="@{'/post/update/' + ${post.id}}" class="btn btn-success">Edit</a> <a th:href="@{'/post/delete/' + ${post.id}}" class="btn btn-danger">Delete</a>

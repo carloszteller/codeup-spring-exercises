@@ -10,10 +10,12 @@ public class PostController {
     // Dependency Injection
     private PostRepository postRepository;
     private UserRepository userRepository;
+    private EmailService emailService;
 
-    public PostController(PostRepository postRepository, UserRepository userRepository) {
+    public PostController(PostRepository postRepository, UserRepository userRepository, EmailService emailService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @GetMapping("/posts")
@@ -43,6 +45,8 @@ public class PostController {
         post.setUser(user);
 
         postRepository.save(post);
+
+        emailService.prepareAndSend(post, "New ad created!", "Title: " + post.getTitle() + "\n" + "Body: " + post.getBody());
 
         return "redirect:/posts";
     }

@@ -18,8 +18,7 @@ public class PostController {
 
     @GetMapping("/posts")
     public String posts(Model model) {
-        model.addAttribute("title", "View All Posts");
-        model.addAttribute("posts", postRepository.findAll());
+       model.addAttribute("posts", postRepository.findAll());
 
         return "/posts/index";
     }
@@ -27,7 +26,6 @@ public class PostController {
     @GetMapping("/post/show/{id}")
     public String postById(@PathVariable long id, Model model) {
 //        Post post = new Post(id, "My Post Title", "Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
-        model.addAttribute("title", "View Single Post");
         model.addAttribute("post", postRepository.getOne(id));
 
         return "/posts/show";
@@ -35,16 +33,13 @@ public class PostController {
 
     @GetMapping("/posts/create")
     public String getCreate(Model model) {
-        model.addAttribute("title", "Create New Post");
-
+        model.addAttribute("post", new Post());
         return "/posts/create";
     }
 
     @PostMapping("/posts/create")
-    public String postCreate(@RequestParam("title") String title, @RequestParam("body") String body) {
-        Post post = new Post(title, body);
-        User user = userRepository.getOne((long) 1);
-
+    public String postCreate(@ModelAttribute Post post) {
+        User user = userRepository.getOne(1L);
         post.setUser(user);
 
         postRepository.save(post);
@@ -54,23 +49,19 @@ public class PostController {
 
     @GetMapping("/post/update/{id}")
     public String getUpdate(@PathVariable long id, Model model) {
-        model.addAttribute("title", "Update Post");
         model.addAttribute("post", postRepository.getOne(id));
 
         return "/posts/update";
     }
 
     @PostMapping("/post/update/{id}")
-    public String postUpdate(@PathVariable long id, @RequestParam("title") String title, @RequestParam("body") String body) {
-        Post post = postRepository.getOne(id);
-        User user = userRepository.getOne((long) 1);
-
+    public String postUpdate(@ModelAttribute Post post) {
+        User user = userRepository.getOne(1L);
         post.setUser(user);
-        post.setTitle(title);
-        post.setBody(body);
+
         postRepository.save(post);
 
-        return "redirect:/post/show/" + id;
+        return "redirect:/post/show/" + post.getId();
     }
 
     @GetMapping("/post/delete/{id}")

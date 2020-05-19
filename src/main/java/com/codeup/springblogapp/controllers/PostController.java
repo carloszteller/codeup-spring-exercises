@@ -6,6 +6,7 @@ import com.codeup.springblogapp.models.User;
 import com.codeup.springblogapp.repositories.UserRepository;
 import com.codeup.springblogapp.repositories.PostRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,12 @@ public class PostController {
 
     @PostMapping("/posts/create")
     public String postCreate(@ModelAttribute Post post) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+
+        User user = (User) obj;
         post.setUser(user);
 
         postRepository.save(post);
@@ -73,7 +79,7 @@ public class PostController {
         return "redirect:/post/show/" + post.getId();
     }
 
-    @GetMapping("/post/delete/{id}")
+    @PostMapping("/post/delete/{id}")
     public String getUpdate(@PathVariable long id) {
         postRepository.deleteById(id);
 
